@@ -1,0 +1,57 @@
+name: Test Execution Framework Verification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  run-framework-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      # Step 3: Install dependencies
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r test_execution_framework/requirements.txt
+          pip install webdriver-manager selenium PyYAML
+
+      # Step 4: Install Google Chrome (for Selenium headless)
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install -y ./google-chrome-stable_current_amd64.deb || sudo apt-get -f install
+
+      # Step 5: Run Automated Test Runner Agent
+      - name: Run Test Execution Framework
+        run: |
+          export CHROME_BIN=/usr/bin/google-chrome
+          python test_execution_framework/app.py
+
+      # Step 6: Upload reports
+      - name: Upload Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: test_execution_framework/reports/
+
+      # Step 7: Upload logs
+      - name: Upload Logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-logs
+          path: test_execution_framework/logs/
