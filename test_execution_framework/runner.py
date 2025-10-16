@@ -6,6 +6,7 @@ def run_tests():
         "--html=reports/test_report.html",
         "--self-contained-html",
         "--log-file=logs/execution.log"
+        print("Hello, This is First PR request !")
     ]
     pytest.main(pytest_args)
 
