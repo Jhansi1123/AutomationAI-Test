@@ -1,0 +1,31 @@
+name: Daily Script Runner
+
+# Trigger: run every day at 9 AM UTC
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:  # allows manual run
+
+jobs:
+  run_script:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Setup Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # Step 3: Install dependencies (if you have requirements.txt)
+      - name: Install dependencies
+        run: pip install -r "test_execution_framework/requirements.txt"
+
+      # Step 4: Run your script
+      - name: Run main script
+        run: |
+          python "test_execution_framework/runner.py"
